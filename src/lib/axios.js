@@ -23,42 +23,40 @@
 //   }
 // );
 
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 
 const baseURL = import.meta.env.VITE_API_URL;
 
 export const axiosInstance = axios.create({
-  baseURL: baseURL,
-  headers: {
-    "Content-Type": "application/json",
-  },
+    baseURL: baseURL,
+    headers: {
+        'Content-Type': 'application/json',
+    },
 });
 
 axiosInstance.interceptors.request.use(
-  async (config) => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    async (config) => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
     }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
 );
 
-axiosInstance.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  (error) => {
-    if (error.response && error.response.status === 401) {
-      localStorage.removeItem("token");
-      const navigate = useNavigate();
-      navigate("/");
-    }
+// axiosInstance.interceptors.response.use(
+//     (response) => {
+//         return response;
+//     },
+//     (error) => {
+//         if (error.response && error.response.status === 401) {
+//             localStorage.removeItem('token');
+//             window.location.href = '/auth/login';
+//         }
 
-    return Promise.reject(error);
-  }
-);
+//         return Promise.reject(error);
+//     }
+// );
